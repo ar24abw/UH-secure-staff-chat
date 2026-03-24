@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Secure Staff Chat</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f4f4f4;
+        margin: 0;
+      }
+
+      nav {
+        background: #1f1f1f;
+        color: white;
+        padding: 14px 20px;
+      }
+
+      nav a {
+        color: white;
+        text-decoration: none;
+        margin-right: 15px;
+      }
+
+      .container {
+        width: 80%;
+        max-width: 900px;
+        margin: 30px auto;
+        background: white;
+        padding: 25px;
+        border-radius: 8px;
+        line-height: 1.6;
+      }
+
+      .form-container {
+        max-width: 500px;
+        margin: auto;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 10px;
+        margin-top: 8px;
+        margin-bottom: 15px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+      }
+
+      button {
+        width: 200px; /* smaller width */
+        padding: 10px;
+        margin-top: 10px;
+        border-radius: 6px; /* rounded corners */
+        border: none;
+        background-color: #1f1f1f;
+        color: white;
+        cursor: pointer;
+        display: block;
+        margin-left: auto;
+        margin-right: auto; /* centers button */
+      }
+
+      button:hover {
+        background-color: #333;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      .flash {
+        background: #fff3cd;
+        border: 1px solid #e0c36c;
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+      }
+
+      .log-box {
+        border: 1px solid #ccc;
+        padding: 12px;
+        margin-bottom: 10px;
+        border-radius: 6px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <a href="/">Home</a>
+
+      {% if session.get("user_id") %}
+      <a href="/dashboard">Dashboard</a>
+      <a href="/logout">Logout</a>
+      {% else %}
+      <a href="/login">Login</a>
+      <a href="/register">Register</a>
+      {% endif %}
+    </nav>
+
+    <div class="container">
+      {% with messages = get_flashed_messages() %} {% if messages %} {% for
+      message in messages %}
+      <div class="flash">{{ message }}</div>
+      {% endfor %} {% endif %} {% endwith %} {% block content %}{% endblock %}
+    </div>
+  </body>
+</html>

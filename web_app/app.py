@@ -1,5 +1,6 @@
 # Import Flask tools for routing, forms, sessions, and messages
 from flask import Flask, render_template, request, redirect, url_for, session, flash
+from cryptography.fernet import Fernet
 
 # Import SQLite for a lightweight local database
 import sqlite3
@@ -23,6 +24,18 @@ app.secret_key = "change_this_to_a_long_random_secret_key"
 
 # Name of the SQLite database file
 DATABASE = "secure_chat.db"
+
+# -------------------------------------------------------------------
+# Message encryption setup
+# -------------------------------------------------------------------
+# This key is used to encrypt and decrypt staff messages.
+# It helps protect message confidentiality in case someone accesses
+# the database file directly.
+
+ENCRYPTION_KEY = b"R38ZpzqvRxnOu0eR90j_30c_O2xL3QVfrKVcPFaaKD0="
+
+# Create a Fernet cipher object using the fixed encryption key
+cipher = Fernet(ENCRYPTION_KEY)
 
 
 # Create a reusable database connection function

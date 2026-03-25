@@ -82,9 +82,35 @@
 
       .log-box {
         border: 1px solid #ccc;
-        padding: 12px;
-        margin-bottom: 10px;
-        border-radius: 6px;
+        padding: 16px;
+        margin-bottom: 14px;
+        border-radius: 8px;
+        background-color: #fafafa;
+
+        /* Keeps long text inside the box */
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        word-break: break-word;
+        white-space: normal;
+
+        /* Makes spacing look cleaner */
+        line-height: 1.6;
+      }
+
+      .log-box p {
+        margin: 8px 0;
+      }
+
+      textarea {
+        resize: none;
+        width: 100%;
+        min-height: 180px;
+        box-sizing: border-box;
+      }
+
+      .log-box strong {
+        display: inline-block;
+        margin-right: 4px;
       }
     </style>
   </head>

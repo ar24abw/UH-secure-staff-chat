@@ -1,6 +1,4 @@
-{% extends "base.html" %}
-
-{% block content %}
+{% extends "base.html" %} {% block content %}
 <div class="page-heading">
   <h2>Welcome, {{ session["username"] }}</h2>
   <p class="muted">
@@ -9,7 +7,7 @@
 </div>
 
 <div class="content-card">
-  <h3 style="margin-bottom: 18px;">Send a Message</h3>
+  <h3 style="margin-bottom: 18px">Send a Message</h3>
 
   <form method="POST" class="form-container">
     <label for="receiver_id">Select Recipient</label>
@@ -42,57 +40,63 @@
   "
 >
   <div class="content-card">
-    <h3 style="margin-bottom: 18px;">Received Messages</h3>
+    <h3 style="margin-bottom: 18px">Received Messages</h3>
 
     {% if received_messages %}
-      <div style="display: flex; flex-direction: column; gap: 14px;">
+    <div class="scroll-box">
+      <div style="display: flex; flex-direction: column; gap: 14px">
         {% for msg in received_messages %}
-        <div class="log-box" style="margin-bottom: 0;">
+        <div class="log-box" style="margin-bottom: 0">
           <p><strong>From:</strong> {{ msg['sender_name'] }}</p>
           <p><strong>Time:</strong> {{ msg['created_at'] }}</p>
           <p><strong>Message:</strong> {{ msg['message_text'] }}</p>
         </div>
         {% endfor %}
       </div>
+    </div>
     {% else %}
-      <p class="empty-state">No messages received yet.</p>
+    <p class="empty-state">No messages received yet.</p>
     {% endif %}
   </div>
 
   <div class="content-card">
-    <h3 style="margin-bottom: 18px;">Sent Messages</h3>
+    <h3 style="margin-bottom: 18px">Sent Messages</h3>
 
     {% if sent_messages %}
-      <div style="display: flex; flex-direction: column; gap: 14px;">
+    <div class="scroll-box">
+      <div style="display: flex; flex-direction: column; gap: 14px">
         {% for msg in sent_messages %}
-        <div class="log-box" style="margin-bottom: 0;">
+        <div class="log-box" style="margin-bottom: 0">
           <p><strong>To:</strong> {{ msg['receiver_name'] }}</p>
           <p><strong>Time:</strong> {{ msg['created_at'] }}</p>
           <p><strong>Message:</strong> {{ msg['message_text'] }}</p>
         </div>
         {% endfor %}
       </div>
+    </div>
     {% else %}
-      <p class="empty-state">No sent messages yet.</p>
+    <p class="empty-state">No sent messages yet.</p>
     {% endif %}
   </div>
 </div>
 
 <div class="content-card">
-  <h3 style="margin-bottom: 18px;">Recent Audit Activity</h3>
+  <h3 style="margin-bottom: 18px">Recent Audit Activity</h3>
 
   {% if logs %}
-    <div style="display: flex; flex-direction: column; gap: 14px;">
+  <div class="scroll-box">
+    <div style="display: flex; flex-direction: column; gap: 14px">
       {% for log in logs %}
-      <div class="log-box" style="margin-bottom: 0;">
+      <div class="log-box" style="margin-bottom: 0">
         <p><strong>Time:</strong> {{ log['created_at'] }}</p>
         <p><strong>Action:</strong> {{ log['action'] }}</p>
         <p><strong>Details:</strong> {{ log['details'] }}</p>
       </div>
       {% endfor %}
     </div>
+  </div>
   {% else %}
-    <p class="empty-state">No audit logs yet.</p>
+  <p class="empty-state">No audit logs yet.</p>
   {% endif %}
 </div>
 

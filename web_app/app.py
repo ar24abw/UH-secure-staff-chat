@@ -23,7 +23,7 @@ app = Flask(__name__)
 app.secret_key = "change_this_to_a_long_random_secret_key"
 
 # Automatically log out inactive users after 5 minutes
-app.permanent_session_lifetime = timedelta(minutes=1)
+app.permanent_session_lifetime = timedelta(minutes=5)
 
 # Name of the SQLite database file
 DATABASE = "secure_chat.db"
@@ -452,7 +452,7 @@ def dashboard():
         (session["user_id"],),
     ).fetchall()
 
-    # Get received messages for the current user (encrypted in DB)
+    # Get received messages for the current user
     received_messages_raw = conn.execute(
         """
         SELECT messages.created_at, messages.message_text, users.username AS sender_name
@@ -464,13 +464,36 @@ def dashboard():
         (session["user_id"],),
     ).fetchall()
 
-    # Decrypt messages before displaying them to the user
+    # Decrypt received messages before displaying them
     received_messages = []
     for msg in received_messages_raw:
         received_messages.append(
             {
                 "created_at": msg["created_at"],
                 "sender_name": msg["sender_name"],
+                "message_text": decrypt_message(msg["message_text"]),
+            }
+        )
+
+    # Get sent messages for the current user
+    sent_messages_raw = conn.execute(
+        """
+        SELECT messages.created_at, messages.message_text, users.username AS receiver_name
+        FROM messages
+        JOIN users ON messages.receiver_id = users.id
+        WHERE messages.sender_id = ?
+        ORDER BY messages.created_at DESC
+        """,
+        (session["user_id"],),
+    ).fetchall()
+
+    # Decrypt sent messages before displaying them
+    sent_messages = []
+    for msg in sent_messages_raw:
+        sent_messages.append(
+            {
+                "created_at": msg["created_at"],
+                "receiver_name": msg["receiver_name"],
                 "message_text": decrypt_message(msg["message_text"]),
             }
         )
@@ -482,15 +505,19 @@ def dashboard():
         FROM audit_logs
         ORDER BY created_at DESC
         LIMIT 10
-    """
+        """
     ).fetchall()
 
     # Close connection
     conn.close()
 
-    # Show dashboard with users, messages, and logs
+    # Show dashboard with users, received messages, sent messages, and logs
     return render_template(
-        "dashboard.html", users=users, messages=received_messages, logs=logs
+        "dashboard.html",
+        users=users,
+        received_messages=received_messages,
+        sent_messages=sent_messages,
+        logs=logs,
     )
 
 

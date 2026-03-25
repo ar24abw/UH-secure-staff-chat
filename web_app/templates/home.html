@@ -1,35 +1,187 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="page-heading">
+  <h1>UH Secure Staff Chat</h1>
+  <p class="muted">
+    A secure internal messaging platform designed to support confidential staff
+    communication within the University of Hertfordshire environment.
+  </p>
+</div>
 
-<h2>Secure Staff Communication System</h2>
+<div
+  style="
+    display: grid;
+    grid-template-columns: 1.35fr 0.95fr;
+    gap: 24px;
+    align-items: stretch;
+    margin-bottom: 28px;
+  "
+>
+  <div class="content-card" style="padding: 30px;">
+    <div style="margin-bottom: 18px;">
+      <span
+        style="
+          display: inline-block;
+          background: #e6f0f7;
+          color: #16324f;
+          padding: 8px 12px;
+          border-radius: 999px;
+          font-size: 0.85rem;
+          font-weight: 600;
+          margin-bottom: 16px;
+        "
+      >
+        Internal Staff Communication
+      </span>
 
-<p>
-This system provides a secure internal communication platform for university staff.
-It is designed to support confidential discussions related to academic activities,
-administrative coordination, and sensitive student matters.
-</p>
+      <h2 style="font-size: 2rem; margin-bottom: 14px;">
+        Secure messaging for university staff collaboration
+      </h2>
 
-<p>
-The platform ensures that only authenticated users can access the system, and all
-communications are handled within a controlled environment to improve data security
-and privacy.
-</p>
+      <p style="font-size: 1.03rem; margin-bottom: 20px;">
+        UH Secure Staff Chat is built to provide a controlled platform for
+        sensitive internal communication between staff members. It supports
+        secure access, protected message exchange, and activity visibility
+        through audit logging.
+      </p>
 
-<hr>
+      <p class="muted" style="margin-bottom: 26px;">
+        The system is intended for university-related communication such as
+        administrative coordination, academic discussion, and confidential staff
+        interaction in a safer digital environment.
+      </p>
+    </div>
 
-<h3>Key Features</h3>
-<ul>
-    <li>Secure staff login and authentication</li>
-    <li>Controlled access to internal communication</li>
-    <li>Private messaging between staff members</li>
-    <li>Audit logging for system activity monitoring</li>
-</ul>
+    <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+      <a href="/login" class="button-link">Log In</a>
+      <a
+        href="/register"
+        class="button-link"
+        style="
+          background: #ffffff;
+          color: #005e7a;
+          border: 1px solid #b8c9d6;
+        "
+      >
+        Register Account
+      </a>
+    </div>
+  </div>
 
-<hr>
+  <div
+    class="content-card"
+    style="
+      padding: 26px;
+      background: linear-gradient(180deg, #16324f 0%, #21496f 100%);
+      color: white;
+      border: none;
+    "
+  >
+    <h3 style="color: white; margin-bottom: 18px;">System Purpose</h3>
 
-<p>
-Please use the navigation menu above to log in or register a new account.
-</p>
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      <div
+        style="
+          background: rgba(255,255,255,0.08);
+          border: 1px solid rgba(255,255,255,0.12);
+          border-radius: 14px;
+          padding: 16px;
+        "
+      >
+        <strong style="display: block; margin-bottom: 6px;">Secure Access</strong>
+        <span style="color: #d9e8f2;">
+          Only authenticated users can access the platform and interact with its
+          protected messaging features.
+        </span>
+      </div>
 
+      <div
+        style="
+          background: rgba(255,255,255,0.08);
+          border: 1px solid rgba(255,255,255,0.12);
+          border-radius: 14px;
+          padding: 16px;
+        "
+      >
+        <strong style="display: block; margin-bottom: 6px;">Confidential Exchange</strong>
+        <span style="color: #d9e8f2;">
+          Messages are designed to be handled within a secure internal system
+          rather than informal communication channels.
+        </span>
+      </div>
+
+      <div
+        style="
+          background: rgba(255,255,255,0.08);
+          border: 1px solid rgba(255,255,255,0.12);
+          border-radius: 14px;
+          padding: 16px;
+        "
+      >
+        <strong style="display: block; margin-bottom: 6px;">Activity Monitoring</strong>
+        <span style="color: #d9e8f2;">
+          Audit records help improve accountability and support visibility of key
+          system actions.
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="section-divider" />
+
+<h2 style="margin-bottom: 18px;">Core Features</h2>
+
+<div
+  style="
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  "
+>
+  <div class="content-card">
+    <h3 style="margin-bottom: 10px;">Protected staff authentication</h3>
+    <p class="muted" style="margin: 0;">
+      Access is limited to registered users, helping keep internal communication
+      within an authorised staff environment.
+    </p>
+  </div>
+
+  <div class="content-card">
+    <h3 style="margin-bottom: 10px;">Encrypted private messaging</h3>
+    <p class="muted" style="margin: 0;">
+      Messages are handled more securely to reduce exposure of sensitive staff
+      discussions and internal matters.
+    </p>
+  </div>
+
+  <div class="content-card">
+    <h3 style="margin-bottom: 10px;">Controlled communication space</h3>
+    <p class="muted" style="margin: 0;">
+      The system creates a focused platform for staff-only interaction instead
+      of relying on general-purpose external tools.
+    </p>
+  </div>
+
+  <div class="content-card">
+    <h3 style="margin-bottom: 10px;">Audit trail visibility</h3>
+    <p class="muted" style="margin: 0;">
+      Important actions such as registration, login, and messaging activity can
+      be recorded to support monitoring and accountability.
+    </p>
+  </div>
+</div>
+
+<style>
+  @media (max-width: 900px) {
+    div[style*="grid-template-columns: 1.35fr 0.95fr"] {
+      grid-template-columns: 1fr !important;
+    }
+
+    div[style*="grid-template-columns: repeat(2, minmax(0, 1fr))"] {
+      grid-template-columns: 1fr !important;
+    }
+  }
+</style>
 {% endblock %}

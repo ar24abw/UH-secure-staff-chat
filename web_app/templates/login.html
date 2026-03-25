@@ -1,15 +1,47 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h2>Staff Login</h2>
+<div class="auth-shell">
+  <div class="auth-card">
+    <div class="page-heading" style="margin-bottom: 22px;">
+      <h2>Staff Login</h2>
+      <p class="muted">
+        Sign in to access UH Secure Staff Chat and continue to the protected staff dashboard.
+      </p>
+    </div>
 
-    <form method="POST" >
-        <label>Username</label>
-        <input type="text" name="username" required>
+    <form method="POST" class="form-container">
+      <label for="username">Username</label>
+      <input
+        type="text"
+        id="username"
+        name="username"
+        placeholder="Enter your staff username"
+        required
+      />
 
-        <label>Password</label>
-        <input type="password" name="password" required>
+      <label for="password">Password</label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        placeholder="Enter your password"
+        required
+      />
 
+      <div class="button-center" style="margin-top: 8px;">
         <button type="submit">Log In</button>
+      </div>
     </form>
+
+    <hr class="section-divider" style="margin: 24px 0 18px;" />
+
+    <p class="muted" style="text-align: center; margin: 0;">
+      Don’t have an account yet?
+      <a href="/register" style="color: #005e7a; font-weight: 600; text-decoration: none;">
+        Register here
+      </a>
+    </p>
+  </div>
+</div>
 {% endblock %}

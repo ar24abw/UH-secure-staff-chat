@@ -3,135 +3,312 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Secure Staff Chat</title>
+    <title>UH Secure Staff Chat</title>
     <style>
+      :root {
+        --nav-bg: #16324f;
+        --nav-hover: #234b73;
+        --page-bg: #eef3f8;
+        --panel-bg: #ffffff;
+        --panel-border: #d7e1ea;
+        --text-main: #1f2933;
+        --text-soft: #52606d;
+        --accent: #005e7a;
+        --accent-hover: #004b61;
+        --success-bg: #e9f7ef;
+        --success-border: #9fd5b3;
+        --shadow: 0 10px 30px rgba(22, 50, 79, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
       body {
-        font-family: Arial, sans-serif;
-        background: #f4f4f4;
         margin: 0;
+        font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+        background: var(--page-bg);
+        color: var(--text-main);
       }
 
       nav {
-        background: #1f1f1f;
-        color: white;
-        padding: 14px 20px;
+        background: var(--nav-bg);
+        padding: 0 28px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
       }
 
-      nav a {
-        color: white;
+      .nav-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        min-height: 68px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+      }
+
+      .brand {
+        color: #ffffff;
+        font-size: 1.05rem;
+        font-weight: 700;
+        letter-spacing: 0.2px;
         text-decoration: none;
-        margin-right: 15px;
+        white-space: nowrap;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .nav-links a {
+        color: #ffffff;
+        text-decoration: none;
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        transition: background-color 0.2s ease;
+      }
+
+      .nav-links a:hover {
+        background: var(--nav-hover);
       }
 
       .container {
-        width: 80%;
-        max-width: 900px;
+        width: min(1180px, 92%);
+        margin: 34px auto;
+      }
+
+      .page-panel {
+        background: var(--panel-bg);
+        border: 1px solid var(--panel-border);
+        border-radius: 18px;
+        padding: 34px;
+        box-shadow: var(--shadow);
+      }
+
+      h1,
+      h2,
+      h3,
+      h4 {
+        margin-top: 0;
+        color: #102a43;
+      }
+
+      p {
+        line-height: 1.7;
+        color: var(--text-main);
+      }
+
+      .muted {
+        color: var(--text-soft);
+      }
+
+      .section-divider {
+        border: none;
+        border-top: 1px solid #d9e2ec;
+        margin: 28px 0;
+      }
+
+      .auth-shell {
+        max-width: 520px;
         margin: 30px auto;
-        background: white;
-        padding: 25px;
-        border-radius: 8px;
-        line-height: 1.6;
+      }
+
+      .auth-card,
+      .content-card,
+      .log-box {
+        background: #ffffff;
+        border: 1px solid var(--panel-border);
+        border-radius: 16px;
+        padding: 22px;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+      }
+
+      .content-card {
+        margin-bottom: 20px;
       }
 
       .form-container {
-        max-width: 500px;
-        margin: auto;
+        max-width: 100%;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #243b53;
       }
 
       input,
       select,
       textarea {
         width: 100%;
-        padding: 10px;
-        margin-top: 8px;
-        margin-bottom: 15px;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-        box-sizing: border-box;
+        padding: 12px 14px;
+        margin-bottom: 18px;
+        border-radius: 10px;
+        border: 1px solid #bcccdc;
+        background: #f8fbfd;
+        color: var(--text-main);
+        font-size: 0.96rem;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease,
+          background-color 0.2s ease;
       }
 
-      button {
-        width: 200px; /* smaller width */
-        padding: 10px;
-        margin-top: 10px;
-        border-radius: 6px; /* rounded corners */
+      input:focus,
+      select:focus,
+      textarea:focus {
+        outline: none;
+        border-color: #5b8def;
+        box-shadow: 0 0 0 3px rgba(91, 141, 239, 0.16);
+        background: #ffffff;
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 150px;
+      }
+
+      button,
+      .button-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 180px;
+        padding: 12px 18px;
         border: none;
-        background-color: #1f1f1f;
-        color: white;
+        border-radius: 10px;
+        background: var(--accent);
+        color: #ffffff;
+        font-weight: 600;
+        font-size: 0.95rem;
         cursor: pointer;
-        display: block;
-        margin-left: auto;
-        margin-right: auto; /* centers button */
+        text-decoration: none;
+        transition: background-color 0.2s ease, transform 0.15s ease;
       }
 
-      button:hover {
-        background-color: #333;
+      button:hover,
+      .button-link:hover {
+        background: var(--accent-hover);
       }
 
-      button {
-        cursor: pointer;
+      button:active,
+      .button-link:active {
+        transform: translateY(1px);
+      }
+
+      .button-center {
+        display: flex;
+        justify-content: center;
       }
 
       .flash {
-        background: #fff3cd;
-        border: 1px solid #e0c36c;
-        padding: 10px;
-        margin-bottom: 15px;
-        border-radius: 5px;
+        background: var(--success-bg);
+        border: 1px solid var(--success-border);
+        color: #1e4620;
+        padding: 14px 16px;
+        margin-bottom: 20px;
+        border-radius: 12px;
+        font-weight: 500;
       }
 
       .log-box {
-        border: 1px solid #ccc;
-        padding: 16px;
         margin-bottom: 14px;
-        border-radius: 8px;
-        background-color: #fafafa;
-
-        /* Keeps long text inside the box */
         overflow-wrap: break-word;
-        word-wrap: break-word;
         word-break: break-word;
-        white-space: normal;
-
-        /* Makes spacing look cleaner */
-        line-height: 1.6;
+        line-height: 1.65;
       }
 
       .log-box p {
         margin: 8px 0;
       }
 
-      textarea {
-        resize: none;
-        width: 100%;
-        min-height: 180px;
-        box-sizing: border-box;
+      .empty-state {
+        margin: 0;
+        padding: 16px 18px;
+        border: 1px dashed #c7d2da;
+        border-radius: 12px;
+        background: #f9fbfc;
+        color: var(--text-soft);
       }
 
-      .log-box strong {
-        display: inline-block;
-        margin-right: 4px;
+      .page-heading {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 28px;
+      }
+
+      .page-heading h2 {
+        margin-bottom: 0;
+      }
+
+      @media (max-width: 768px) {
+        nav {
+          padding: 0 16px;
+        }
+
+        .nav-inner {
+          min-height: auto;
+          padding: 14px 0;
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .container {
+          width: min(94%, 100%);
+          margin: 20px auto;
+        }
+
+        .page-panel {
+          padding: 22px;
+          border-radius: 14px;
+        }
+
+        .auth-shell {
+          margin: 10px auto;
+        }
+
+        button,
+        .button-link {
+          width: 100%;
+        }
       }
     </style>
   </head>
   <body>
     <nav>
-      <a href="/">Home</a>
+      <div class="nav-inner">
+        <a href="/" class="brand">UH Secure Staff Chat</a>
 
-      {% if session.get("user_id") %}
-      <a href="/dashboard">Dashboard</a>
-      <a href="/logout">Logout</a>
-      {% else %}
-      <a href="/login">Login</a>
-      <a href="/register">Register</a>
-      {% endif %}
+        <div class="nav-links">
+          <a href="/">Home</a>
+
+          {% if session.get("user_id") %}
+          <a href="/dashboard">Dashboard</a>
+          <a href="/logout">Logout</a>
+          {% else %}
+          <a href="/login">Login</a>
+          <a href="/register">Register</a>
+          {% endif %}
+        </div>
+      </div>
     </nav>
 
     <div class="container">
-      {% with messages = get_flashed_messages() %} {% if messages %} {% for
-      message in messages %}
-      <div class="flash">{{ message }}</div>
-      {% endfor %} {% endif %} {% endwith %} {% block content %}{% endblock %}
+      <div class="page-panel">
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="flash">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+      </div>
     </div>
   </body>
 </html>

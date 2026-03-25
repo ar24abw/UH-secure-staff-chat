@@ -49,12 +49,14 @@ def get_db_connection():
     # Return the connection object
     return conn
 
+
 # -------------------------------------------------------------------
 # Message encryption functions
 # -------------------------------------------------------------------
 # These functions keep the logic simple:
 # 1. encrypt_message() is used before storing a message in the database
 # 2. decrypt_message() is used when showing a message to the receiver
+
 
 def encrypt_message(plain_text):
     # Convert normal text into encrypted text before storing it
@@ -81,17 +83,20 @@ def init_db():
     cursor = conn.cursor()
 
     # Create a users table for staff account details
-    cursor.execute("""
+    cursor.execute(
+        """
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL,
             password_hash TEXT NOT NULL,
             created_at TEXT NOT NULL
         )
-    """)
+    """
+    )
 
     # Create an audit log table to record important actions
-    cursor.execute("""
+    cursor.execute(
+        """
         CREATE TABLE IF NOT EXISTS audit_logs (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER,
@@ -100,10 +105,12 @@ def init_db():
             created_at TEXT NOT NULL,
             FOREIGN KEY (user_id) REFERENCES users (id)
         )
-    """)
-    
-        # Create a messages table to store messages between staff users
-    cursor.execute("""
+    """
+    )
+
+    # Create a messages table to store messages between staff users
+    cursor.execute(
+        """
         CREATE TABLE IF NOT EXISTS messages (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             sender_id INTEGER NOT NULL,
@@ -113,7 +120,8 @@ def init_db():
             FOREIGN KEY (sender_id) REFERENCES users (id),
             FOREIGN KEY (receiver_id) REFERENCES users (id)
         )
-    """)
+    """
+    )
 
     # Save the changes
     conn.commit()
@@ -128,10 +136,13 @@ def log_action(user_id, action, details=""):
     conn = get_db_connection()
 
     # Insert the action into the audit log table
-    conn.execute("""
+    conn.execute(
+        """
         INSERT INTO audit_logs (user_id, action, details, created_at)
         VALUES (?, ?, ?, ?)
-    """, (user_id, action, details, datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+    """,
+        (user_id, action, details, datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+    )
 
     # Save changes
     conn.commit()
@@ -185,22 +196,20 @@ def register():
 
         try:
             # Insert the new user into the users table
-            conn.execute("""
+            conn.execute(
+                """
                 INSERT INTO users (username, password_hash, created_at)
                 VALUES (?, ?, ?)
-            """, (
-                username,
-                password_hash,
-                datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            ))
+            """,
+                (username, password_hash, datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+            )
 
             # Save the changes
             conn.commit()
 
             # Read the newly created user for logging
             user = conn.execute(
-                "SELECT * FROM users WHERE username = ?",
-                (username,)
+                "SELECT * FROM users WHERE username = ?", (username,)
             ).fetchone()
 
             # Log the registration action
@@ -239,8 +248,7 @@ def login():
 
         # Look up the user by username
         user = conn.execute(
-            "SELECT * FROM users WHERE username = ?",
-            (username,)
+            "SELECT * FROM users WHERE username = ?", (username,)
         ).fetchone()
 
         # Close connection
@@ -262,7 +270,9 @@ def login():
             return redirect(url_for("dashboard"))
         else:
             # Log failed login attempt
-            log_action(None, "FAILED_LOGIN", f"Failed login attempt for username: {username}")
+            log_action(
+                None, "FAILED_LOGIN", f"Failed login attempt for username: {username}"
+            )
 
             # Show error message
             flash("Invalid username or password.")
@@ -309,22 +319,32 @@ def dashboard():
             flash("Message cannot be empty.")
             return redirect(url_for("dashboard"))
 
-        # Save the message into the database
-        conn.execute("""
+        # Encrypt the message before storing it in the database
+        encrypted_message = encrypt_message(message_text)
+
+        # Save the encrypted message into the database
+        conn.execute(
+            """
             INSERT INTO messages (sender_id, receiver_id, message_text, created_at)
             VALUES (?, ?, ?, ?)
-        """, (
-            session["user_id"],
-            receiver_id,
-            message_text,
-            datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        ))
+        """,
+            (
+                session["user_id"],
+                receiver_id,
+                encrypted_message,
+                datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            ),
+        )
 
         # Save changes
         conn.commit()
 
         # Record the action in the audit log
-        log_action(session["user_id"], "SEND_MESSAGE", f"Message sent to user ID {receiver_id}")
+        log_action(
+            session["user_id"],
+            "SEND_MESSAGE",
+            f"Encrypted message sent to user ID {receiver_id}",
+        )
 
         # Show success message
         flash("Message sent successfully.")
@@ -333,39 +353,44 @@ def dashboard():
         return redirect(url_for("dashboard"))
 
     # Get all users except the currently logged-in user
-    users = conn.execute("""
+    users = conn.execute(
+        """
         SELECT id, username
         FROM users
         WHERE id != ?
         ORDER BY username
-    """, (session["user_id"],)).fetchall()
+    """,
+        (session["user_id"],),
+    ).fetchall()
 
     # Get received messages for the current user
-    received_messages = conn.execute("""
+    received_messages = conn.execute(
+        """
         SELECT messages.created_at, messages.message_text, users.username AS sender_name
         FROM messages
         JOIN users ON messages.sender_id = users.id
         WHERE messages.receiver_id = ?
         ORDER BY messages.created_at DESC
-    """, (session["user_id"],)).fetchall()
+    """,
+        (session["user_id"],),
+    ).fetchall()
 
     # Get latest audit logs for display
-    logs = conn.execute("""
+    logs = conn.execute(
+        """
         SELECT created_at, action, details
         FROM audit_logs
         ORDER BY created_at DESC
         LIMIT 10
-    """).fetchall()
+    """
+    ).fetchall()
 
     # Close connection
     conn.close()
 
     # Show dashboard with users, messages, and logs
     return render_template(
-        "dashboard.html",
-        users=users,
-        messages=received_messages,
-        logs=logs
+        "dashboard.html", users=users, messages=received_messages, logs=logs
     )
 
 

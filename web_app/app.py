@@ -12,7 +12,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 
 # Import datetime for timestamps
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 # Create the Flask application
@@ -262,27 +262,75 @@ def login():
         # Close connection
         conn.close()
 
-        # Check whether the user exists and password is correct
-        if user and check_password_hash(user["password_hash"], password):
-            # Save basic user info into the session
-            session["user_id"] = user["id"]
-            session["username"] = user["username"]
+        # Check if user exists
+        if user:
+            # Check if account is locked
+            if user["lock_until"]:
+                lock_time = datetime.strptime(
+                    user["lock_until"], "%Y-%m-%d %H:%M:%S"
+                )
+                if datetime.now() < lock_time:
+                    flash("Account temporarily locked. Try again later.")
+                    return redirect(url_for("login"))
 
-            # Log the successful login
-            log_action(user["id"], "LOGIN", "User logged in successfully")
+            # Check password
+            if check_password_hash(user["password_hash"], password):
+                # Reset failed attempts on success
+                conn = get_db_connection()
+                conn.execute(
+                    "UPDATE users SET failed_attempts = 0, lock_until = NULL WHERE id = ?",
+                    (user["id"],),
+                )
+                conn.commit()
+                conn.close()
 
-            # Show success message
-            flash("Login successful.")
+                # Save basic user info into the session
+                session["user_id"] = user["id"]
+                session["username"] = user["username"]
 
-            # Send user to the dashboard
-            return redirect(url_for("dashboard"))
+                # Log the successful login
+                log_action(user["id"], "LOGIN", "User logged in successfully")
+
+                # Show success message
+                flash("Login successful.")
+
+                # Send user to the dashboard
+                return redirect(url_for("dashboard"))
+
+            else:
+                # Failed login attempt
+                failed_attempts = user["failed_attempts"] + 1
+                lock_until = None
+
+                # Lock account after 3 failed attempts
+                if failed_attempts >= 3:
+                    lock_until_time = datetime.now() + timedelta(minutes=1)
+                    lock_until = lock_until_time.strftime("%Y-%m-%d %H:%M:%S")
+
+                conn = get_db_connection()
+                conn.execute(
+                    "UPDATE users SET failed_attempts = ?, lock_until = ? WHERE id = ?",
+                    (failed_attempts, lock_until, user["id"]),
+                )
+                conn.commit()
+                conn.close()
+
+                # Log failed login attempt
+                log_action(
+                    None,
+                    "FAILED_LOGIN",
+                    f"Failed login attempt for username: {username}",
+                )
+
+                if lock_until:
+                    flash("Too many failed attempts. Account locked for 1 minute.")
+                else:
+                    flash("Invalid username or password.")
+
+                return redirect(url_for("login"))
+
         else:
-            # Log failed login attempt
-            log_action(
-                None, "FAILED_LOGIN", f"Failed login attempt for username: {username}"
-            )
-
-            # Show error message
+            # User does not exist
             flash("Invalid username or password.")
             return redirect(url_for("login"))
 

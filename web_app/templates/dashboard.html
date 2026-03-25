@@ -1,46 +1,117 @@
 {% extends "base.html" %} {% block content %}
-<h2>Welcome, {{ session["username"] }}</h2>
-<p>This is the protected dashboard of the secure staff chat system.</p>
-
-<hr />
-
-<h3>Send a Message</h3>
-<form method="POST" class="form-container">
-  <label>Select Recipient</label>
-  <select name="receiver_id" required>
-    {% for user in users %}
-    <option value="{{ user['id'] }}">{{ user['username'] }}</option>
-    {% endfor %}
-  </select>
-
-  <label>Message</label>
-  <textarea name="message_text" rows="4" required></textarea>
-
-  <button type="submit">Send Message</button>
-</form>
-
-<hr />
-
-<h3>Received Messages</h3>
-{% if received_messages %} {% for msg in received_messages %}
-<div class="log-box">
-  <p><strong>From:</strong> {{ msg['sender_name'] }}</p>
-  <p><strong>Time:</strong> {{ msg['created_at'] }}</p>
-  <p><strong>Message:</strong> {{ msg['message_text'] }}</p>
+<div class="page-heading">
+  <h2>Welcome, {{ session["username"] }}</h2>
+  <p class="muted">
+    Secure internal dashboard for staff communication and activity monitoring.
+  </p>
 </div>
-{% endfor %} {% else %}
-<p>No messages received yet.</p>
-{% endif %} 
 
-<hr />
+<div
+  style="
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 22px;
+    align-items: start;
+    margin-bottom: 22px;
+  "
+>
+  <div class="content-card">
+    <h3 style="margin-bottom: 18px">Send a Message</h3>
 
-<h3>Recent Audit Activity</h3>
-{% if logs %} {% for log in logs %}
-<div class="log-box">
-  <p><strong>Time:</strong> {{ log['created_at'] }}</p>
-  <p><strong>Action:</strong> {{ log['action'] }}</p>
-  <p><strong>Details:</strong> {{ log['details'] }}</p>
+    <form method="POST" class="form-container">
+      <label for="receiver_id">Select Recipient</label>
+      <select name="receiver_id" id="receiver_id" required>
+        {% for user in users %}
+        <option value="{{ user['id'] }}">{{ user['username'] }}</option>
+        {% endfor %}
+      </select>
+
+      <label for="message_text">Message</label>
+      <textarea
+        name="message_text"
+        id="message_text"
+        rows="6"
+        required
+        placeholder="Type your message here"
+      ></textarea>
+
+      <button type="submit">Send Message</button>
+    </form>
+  </div>
+
+  <div class="content-card">
+    <h3 style="margin-bottom: 18px">Recent Audit Activity</h3>
+
+    {% if logs %}
+    <div style="display: flex; flex-direction: column; gap: 14px">
+      {% for log in logs %}
+      <div class="log-box" style="margin-bottom: 0">
+        <p><strong>Time:</strong> {{ log['created_at'] }}</p>
+        <p><strong>Action:</strong> {{ log['action'] }}</p>
+        <p><strong>Details:</strong> {{ log['details'] }}</p>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty-state">No audit logs yet.</p>
+    {% endif %}
+  </div>
 </div>
-{% endfor %} {% else %}
-<p>No audit logs yet.</p>
-{% endif %} {% endblock %}
+
+<div
+  style="
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+    align-items: start;
+  "
+>
+  <div class="content-card">
+    <h3 style="margin-bottom: 18px">Received Messages</h3>
+
+    {% if received_messages %}
+    <div style="display: flex; flex-direction: column; gap: 14px">
+      {% for msg in received_messages %}
+      <div class="log-box" style="margin-bottom: 0">
+        <p><strong>From:</strong> {{ msg['sender_name'] }}</p>
+        <p><strong>Time:</strong> {{ msg['created_at'] }}</p>
+        <p><strong>Message:</strong> {{ msg['message_text'] }}</p>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty-state">No messages received yet.</p>
+    {% endif %}
+  </div>
+
+  <div class="content-card">
+    <h3 style="margin-bottom: 18px">Sent Messages</h3>
+
+    {% if sent_messages %}
+    <div style="display: flex; flex-direction: column; gap: 14px">
+      {% for msg in sent_messages %}
+      <div class="log-box" style="margin-bottom: 0">
+        <p><strong>To:</strong> {{ msg['receiver_name'] }}</p>
+        <p><strong>Time:</strong> {{ msg['created_at'] }}</p>
+        <p><strong>Message:</strong> {{ msg['message_text'] }}</p>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty-state">No sent messages yet.</p>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+  @media (max-width: 900px) {
+    div[style*="grid-template-columns: 1.15fr 0.85fr"] {
+      grid-template-columns: 1fr !important;
+    }
+
+    div[style*="grid-template-columns: 1fr 1fr"] {
+      grid-template-columns: 1fr !important;
+    }
+  }
+</style>
+{% endblock %}

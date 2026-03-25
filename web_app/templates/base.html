@@ -268,6 +268,44 @@
         background: #9fb3c8;
       }
 
+      .chat-container {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .chat-bubble {
+        max-width: 75%;
+        padding: 12px 14px;
+        border-radius: 14px;
+        line-height: 1.5;
+        font-size: 0.95rem;
+      }
+
+      .received {
+        background: #f1f5f9;
+        border: 1px solid #dbe4ec;
+        align-self: flex-start;
+      }
+
+      .sent {
+        background: #005e7a;
+        color: white;
+        align-self: flex-end;
+      }
+
+      .chat-meta {
+        font-size: 0.8rem;
+        margin-bottom: 4px;
+        opacity: 0.75;
+      }
+
+      .chat-time {
+        font-size: 0.75rem;
+        margin-top: 6px;
+        opacity: 0.6;
+      }
+
       @media (max-width: 768px) {
         nav {
           padding: 0 16px;

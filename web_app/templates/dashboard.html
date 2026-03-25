@@ -44,12 +44,12 @@
 
     {% if received_messages %}
     <div class="scroll-box">
-      <div style="display: flex; flex-direction: column; gap: 14px">
+      <div class="chat-container">
         {% for msg in received_messages %}
-        <div class="log-box" style="margin-bottom: 0">
-          <p><strong>From:</strong> {{ msg['sender_name'] }}</p>
-          <p><strong>Time:</strong> {{ msg['created_at'] }}</p>
-          <p><strong>Message:</strong> {{ msg['message_text'] }}</p>
+        <div class="chat-bubble received">
+          <div class="chat-meta">From: {{ msg['sender_name'] }}</div>
+          <div>{{ msg['message_text'] }}</div>
+          <div class="chat-time">{{ msg['created_at'] }}</div>
         </div>
         {% endfor %}
       </div>
@@ -64,12 +64,12 @@
 
     {% if sent_messages %}
     <div class="scroll-box">
-      <div style="display: flex; flex-direction: column; gap: 14px">
+      <div class="chat-container">
         {% for msg in sent_messages %}
-        <div class="log-box" style="margin-bottom: 0">
-          <p><strong>To:</strong> {{ msg['receiver_name'] }}</p>
-          <p><strong>Time:</strong> {{ msg['created_at'] }}</p>
-          <p><strong>Message:</strong> {{ msg['message_text'] }}</p>
+        <div class="chat-bubble sent">
+          <div class="chat-meta">To: {{ msg['receiver_name'] }}</div>
+          <div>{{ msg['message_text'] }}</div>
+          <div class="chat-time">{{ msg['created_at'] }}</div>
         </div>
         {% endfor %}
       </div>

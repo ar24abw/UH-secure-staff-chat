@@ -256,50 +256,68 @@ def login():
 
         # Look up the user by username
         user = conn.execute(
-            "SELECT * FROM users WHERE username = ?", (username,)
+            "SELECT * FROM users WHERE username = ?",
+            (username,)
         ).fetchone()
 
-        # Close connection
-        conn.close()
-
-        # Check if user exists
+        # If user exists, check lock status first
         if user:
-            # Check if account is locked
+            # If lock time exists, check whether it is still active
             if user["lock_until"]:
-                lock_time = datetime.strptime(
-                    user["lock_until"], "%Y-%m-%d %H:%M:%S"
-                )
+                lock_time = datetime.strptime(user["lock_until"], "%Y-%m-%d %H:%M:%S")
+
+                # If current time is still before lock expiry, block login
                 if datetime.now() < lock_time:
-                    flash("Account temporarily locked. Try again later.")
+                    conn.close()
+                    flash("Account is temporarily locked due to multiple failed login attempts. Please try again in 1 minute.")
                     return redirect(url_for("login"))
 
-            # Check password
-            if check_password_hash(user["password_hash"], password):
-                # Reset failed attempts on success
-                conn = get_db_connection()
+                # If lock has expired, reset failed attempts and clear lock
                 conn.execute(
-                    "UPDATE users SET failed_attempts = 0, lock_until = NULL WHERE id = ?",
-                    (user["id"],),
+                    """
+                    UPDATE users
+                    SET failed_attempts = 0, lock_until = NULL
+                    WHERE id = ?
+                    """,
+                    (user["id"],)
+                )
+                conn.commit()
+
+                # Refresh user data after reset
+                user = conn.execute(
+                    "SELECT * FROM users WHERE username = ?",
+                    (username,)
+                ).fetchone()
+
+            # Check whether password is correct
+            if check_password_hash(user["password_hash"], password):
+                # Reset failed attempts on successful login
+                conn.execute(
+                    """
+                    UPDATE users
+                    SET failed_attempts = 0, lock_until = NULL
+                    WHERE id = ?
+                    """,
+                    (user["id"],)
                 )
                 conn.commit()
                 conn.close()
 
-                # Save basic user info into the session
+                # Save basic user info into session
                 session["user_id"] = user["id"]
                 session["username"] = user["username"]
 
-                # Log the successful login
+                # Log successful login
                 log_action(user["id"], "LOGIN", "User logged in successfully")
 
-                # Show success message
                 flash("Login successful.")
-
-                # Send user to the dashboard
                 return redirect(url_for("dashboard"))
 
             else:
-                # Failed login attempt
+                # Increase failed attempts count
                 failed_attempts = user["failed_attempts"] + 1
+
+                # Default lock value
                 lock_until = None
 
                 # Lock account after 3 failed attempts
@@ -307,36 +325,41 @@ def login():
                     lock_until_time = datetime.now() + timedelta(minutes=1)
                     lock_until = lock_until_time.strftime("%Y-%m-%d %H:%M:%S")
 
-                conn = get_db_connection()
+                # Save updated failed attempts and lock time
                 conn.execute(
-                    "UPDATE users SET failed_attempts = ?, lock_until = ? WHERE id = ?",
-                    (failed_attempts, lock_until, user["id"]),
+                    """
+                    UPDATE users
+                    SET failed_attempts = ?, lock_until = ?
+                    WHERE id = ?
+                    """,
+                    (failed_attempts, lock_until, user["id"])
                 )
                 conn.commit()
                 conn.close()
 
-                # Log failed login attempt
+                # Log failed login
                 log_action(
                     None,
                     "FAILED_LOGIN",
-                    f"Failed login attempt for username: {username}",
+                    f"Failed login attempt for username: {username}"
                 )
 
+                # Show correct message
                 if lock_until:
                     flash("Too many failed attempts. Account locked for 1 minute.")
                 else:
-                    flash("Invalid username or password.")
+                    remaining_attempts = 3 - failed_attempts
+                    flash(f"Invalid username or password. {remaining_attempts} attempt(s) remaining before lockout.")
 
                 return redirect(url_for("login"))
 
-        else:
-            # User does not exist
-            flash("Invalid username or password.")
-            return redirect(url_for("login"))
+        # If username does not exist
+        conn.close()
+        flash("Invalid username or password.")
+        return redirect(url_for("login"))
 
     # If page is opened normally, show login template
     return render_template("login.html")
-
 
 # Logout route
 @app.route("/logout")

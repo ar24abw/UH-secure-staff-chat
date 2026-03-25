@@ -89,9 +89,11 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL,
             password_hash TEXT NOT NULL,
-            created_at TEXT NOT NULL
+            created_at TEXT NOT NULL,
+            failed_attempts INTEGER DEFAULT 0,
+            lock_until TEXT
         )
-    """
+        """
     )
 
     # Create an audit log table to record important actions

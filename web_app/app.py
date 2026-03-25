@@ -49,6 +49,28 @@ def get_db_connection():
     # Return the connection object
     return conn
 
+# -------------------------------------------------------------------
+# Message encryption functions
+# -------------------------------------------------------------------
+# These functions keep the logic simple:
+# 1. encrypt_message() is used before storing a message in the database
+# 2. decrypt_message() is used when showing a message to the receiver
+
+def encrypt_message(plain_text):
+    # Convert normal text into encrypted text before storing it
+    encrypted_text = cipher.encrypt(plain_text.encode("utf-8"))
+    return encrypted_text.decode("utf-8")
+
+
+def decrypt_message(encrypted_text):
+    # Convert encrypted database text back into readable text
+    try:
+        decrypted_text = cipher.decrypt(encrypted_text.encode("utf-8"))
+        return decrypted_text.decode("utf-8")
+    except Exception:
+        # This helps avoid crashing if an old plaintext message exists
+        return "[Unable to decrypt message]"
+
 
 # Create the required database tables if they do not already exist
 def init_db():

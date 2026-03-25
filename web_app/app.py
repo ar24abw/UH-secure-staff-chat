@@ -362,18 +362,29 @@ def dashboard():
     """,
         (session["user_id"],),
     ).fetchall()
-
-    # Get received messages for the current user
-    received_messages = conn.execute(
+    
+        # Get received messages for the current user (encrypted in DB)
+    received_messages_raw = conn.execute(
         """
         SELECT messages.created_at, messages.message_text, users.username AS sender_name
         FROM messages
         JOIN users ON messages.sender_id = users.id
         WHERE messages.receiver_id = ?
         ORDER BY messages.created_at DESC
-    """,
+        """,
         (session["user_id"],),
     ).fetchall()
+
+    # Decrypt messages before displaying them to the user
+    received_messages = []
+    for msg in received_messages_raw:
+        received_messages.append(
+            {
+                "created_at": msg["created_at"],
+                "sender_name": msg["sender_name"],
+                "message_text": decrypt_message(msg["message_text"]),
+            }
+        )
 
     # Get latest audit logs for display
     logs = conn.execute(

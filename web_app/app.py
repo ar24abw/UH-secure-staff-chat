@@ -180,12 +180,18 @@ def register():
         # Read the username from the form and remove extra spaces
         username = request.form["username"].strip()
 
-        # Read the password from the form
+        # Read the password fields from the form
         password = request.form["password"].strip()
+        confirm_password = request.form["confirm_password"].strip()
 
         # Basic validation so empty values are not accepted
-        if not username or not password:
-            flash("Username and password are required.")
+        if not username or not password or not confirm_password:
+            flash("Username, password, and confirm password are required.")
+            return redirect(url_for("register"))
+
+        # Make sure both password fields match
+        if password != confirm_password:
+            flash("Passwords do not match.")
             return redirect(url_for("register"))
 
         # Hash the password before storing it
@@ -362,8 +368,8 @@ def dashboard():
     """,
         (session["user_id"],),
     ).fetchall()
-    
-        # Get received messages for the current user (encrypted in DB)
+
+    # Get received messages for the current user (encrypted in DB)
     received_messages_raw = conn.execute(
         """
         SELECT messages.created_at, messages.message_text, users.username AS sender_name

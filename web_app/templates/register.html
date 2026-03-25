@@ -1,16 +1,57 @@
-{% extends "base.html" %} {% block content %}
-<h2>Create Staff Account</h2>
+{% extends "base.html" %}
 
-<form method="POST">
-  <label>Username</label>
-  <input type="text" name="username" required />
+{% block panel_class %}auth-panel{% endblock %}
 
-  <label>Password</label>
-  <input type="password" name="password" required />
+{% block content %}
 
-  <label>Confirm Password</label>
-  <input type="password" name="confirm_password" required />
+<div class="auth-shell">
+  <div class="page-heading" style="margin-bottom: 26px;">
+    <h2>Create Staff Account</h2>
+    <p class="muted">
+      Register a new account to use UH Secure Staff Chat for secure internal staff communication.
+    </p>
+  </div>
 
-  <button type="submit">Register</button>
-</form>
+  <form method="POST" class="form-container">
+    <label for="username">Username</label>
+    <input
+      type="text"
+      id="username"
+      name="username"
+      placeholder="Choose a username"
+      required
+    />
+
+    <label for="password">Password</label>
+    <input
+      type="password"
+      id="password"
+      name="password"
+      placeholder="Create a password"
+      required
+    />
+
+    <label for="confirm_password">Confirm Password</label>
+    <input
+      type="password"
+      id="confirm_password"
+      name="confirm_password"
+      placeholder="Re-enter your password"
+      required
+    />
+
+    <div class="button-center" style="margin-top: 8px;">
+      <button type="submit">Register</button>
+    </div>
+  </form>
+
+  <hr class="section-divider" style="margin: 26px 0 18px;" />
+
+  <p class="muted" style="text-align: center; margin: 0;">
+    Already registered?
+    <a href="/login" style="color: #005e7a; font-weight: 600; text-decoration: none;">
+      Log in here
+    </a>
+  </p>
+</div>
 {% endblock %}

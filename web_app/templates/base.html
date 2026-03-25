@@ -114,7 +114,7 @@
 
       .auth-shell {
         max-width: 520px;
-        margin: 30px auto;
+        margin: 18px auto 8px;
       }
 
       .auth-card,
@@ -153,7 +153,9 @@
         background: #f8fbfd;
         color: var(--text-main);
         font-size: 0.96rem;
-        transition: border-color 0.2s ease, box-shadow 0.2s ease,
+        transition:
+          border-color 0.2s ease,
+          box-shadow 0.2s ease,
           background-color 0.2s ease;
       }
 
@@ -186,7 +188,9 @@
         font-size: 0.95rem;
         cursor: pointer;
         text-decoration: none;
-        transition: background-color 0.2s ease, transform 0.15s ease;
+        transition:
+          background-color 0.2s ease,
+          transform 0.15s ease;
       }
 
       button:hover,
@@ -271,6 +275,12 @@
           margin: 10px auto;
         }
 
+        .auth-panel {
+          max-width: 600px;
+          margin: 0 auto;
+          padding: 32px;
+        }
+
         button,
         .button-link {
           width: 100%;
@@ -298,16 +308,11 @@
     </nav>
 
     <div class="container">
-      <div class="page-panel">
-        {% with messages = get_flashed_messages() %}
-          {% if messages %}
-            {% for message in messages %}
-              <div class="flash">{{ message }}</div>
-            {% endfor %}
-          {% endif %}
-        {% endwith %}
-
-        {% block content %}{% endblock %}
+      <div class="page-panel {% block panel_class %}{% endblock %}">
+        {% with messages = get_flashed_messages() %} {% if messages %} {% for
+        message in messages %}
+        <div class="flash">{{ message }}</div>
+        {% endfor %} {% endif %} {% endwith %} {% block content %}{% endblock %}
       </div>
     </div>
   </body>

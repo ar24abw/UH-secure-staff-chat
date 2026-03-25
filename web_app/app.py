@@ -22,6 +22,9 @@ app = Flask(__name__)
 # Change this later to a stronger random value for better security
 app.secret_key = "change_this_to_a_long_random_secret_key"
 
+# Automatically log out inactive users after 5 minutes
+app.permanent_session_lifetime = timedelta(minutes=1)
+
 # Name of the SQLite database file
 DATABASE = "secure_chat.db"
 
@@ -167,6 +170,12 @@ def login_required(route_function):
 
     return wrapped_function
 
+# Automatically refresh session timeout on each request
+@app.before_request
+def make_session_permanent():
+    if "user_id" in session:
+        session.permanent = True
+
 
 # Home page route
 @app.route("/")
@@ -306,6 +315,7 @@ def login():
                 # Save basic user info into session
                 session["user_id"] = user["id"]
                 session["username"] = user["username"]
+                session.permanent = True
 
                 # Log successful login
                 log_action(user["id"], "LOGIN", "User logged in successfully")

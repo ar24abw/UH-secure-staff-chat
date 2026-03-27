@@ -170,6 +170,7 @@ def login_required(route_function):
 
     return wrapped_function
 
+
 # Automatically refresh session timeout on each request
 @app.before_request
 def make_session_permanent():
@@ -265,8 +266,7 @@ def login():
 
         # Look up the user by username
         user = conn.execute(
-            "SELECT * FROM users WHERE username = ?",
-            (username,)
+            "SELECT * FROM users WHERE username = ?", (username,)
         ).fetchone()
 
         # If user exists, check lock status first
@@ -278,7 +278,9 @@ def login():
                 # If current time is still before lock expiry, block login
                 if datetime.now() < lock_time:
                     conn.close()
-                    flash("Account is temporarily locked due to multiple failed login attempts. Please try again in 1 minute.")
+                    flash(
+                        "Account is temporarily locked due to multiple failed login attempts. Please try again in 1 minute."
+                    )
                     return redirect(url_for("login"))
 
                 # If lock has expired, reset failed attempts and clear lock
@@ -288,14 +290,13 @@ def login():
                     SET failed_attempts = 0, lock_until = NULL
                     WHERE id = ?
                     """,
-                    (user["id"],)
+                    (user["id"],),
                 )
                 conn.commit()
 
                 # Refresh user data after reset
                 user = conn.execute(
-                    "SELECT * FROM users WHERE username = ?",
-                    (username,)
+                    "SELECT * FROM users WHERE username = ?", (username,)
                 ).fetchone()
 
             # Check whether password is correct
@@ -307,7 +308,7 @@ def login():
                     SET failed_attempts = 0, lock_until = NULL
                     WHERE id = ?
                     """,
-                    (user["id"],)
+                    (user["id"],),
                 )
                 conn.commit()
                 conn.close()
@@ -342,7 +343,7 @@ def login():
                     SET failed_attempts = ?, lock_until = ?
                     WHERE id = ?
                     """,
-                    (failed_attempts, lock_until, user["id"])
+                    (failed_attempts, lock_until, user["id"]),
                 )
                 conn.commit()
                 conn.close()
@@ -351,7 +352,7 @@ def login():
                 log_action(
                     None,
                     "FAILED_LOGIN",
-                    f"Failed login attempt for username: {username}"
+                    f"Failed login attempt for username: {username}",
                 )
 
                 # Show correct message
@@ -359,7 +360,9 @@ def login():
                     flash("Too many failed attempts. Account locked for 1 minute.")
                 else:
                     remaining_attempts = 3 - failed_attempts
-                    flash(f"Invalid username or password. {remaining_attempts} attempt(s) remaining before lockout.")
+                    flash(
+                        f"Invalid username or password. {remaining_attempts} attempt(s) remaining before lockout."
+                    )
 
                 return redirect(url_for("login"))
 
@@ -370,6 +373,7 @@ def login():
 
     # If page is opened normally, show login template
     return render_template("login.html")
+
 
 # Logout route
 @app.route("/logout")
